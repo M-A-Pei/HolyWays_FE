@@ -1,3 +1,8 @@
+import { Controller, useForm } from "react-hook-form"
+import { api, setAuthToken } from "../libs/api"
+import { useUser } from "../state/store"
+import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 
 const styles = {
     input: {
@@ -14,14 +19,50 @@ const styles = {
         marginTop: "20px"
     }
 }
+
 export default function Login() {
+    const { control, handleSubmit } = useForm()
+    const setUser = useUser(state => state.setUser)
+    const navigate = useNavigate();
+
+    async function onSubmit(data: any) {
+        try {
+            const response = await api.post('/auth/login', data)
+            const token = response.data
+            setAuthToken(token)
+            const user = await api.get("/auth/me");
+            setUser({ name: user.data.name, email: user.data.email, phone: user.data.phone })
+            localStorage.setItem("token", token)
+            toast.success("Login successful")
+            navigate("/")
+
+        } catch (error) {
+            console.log(error)
+            toast.error("Invalid email or password")
+        }
+    }
+
     return (
         <div>
             <h1 className="mb-4">Login</h1>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
-                    <input type="email" style={styles.input} className="form-control" placeholder="Enter email" />
-                    <input type="password" style={styles.input} className="form-control" placeholder="Enter password" />
+                    <Controller
+                        name="email"
+                        control={control}
+                        render={({ field }) =>
+                            <input {...field} type="email" style={styles.input} className="form-control" placeholder="email" required />
+                        }
+                    />
+
+                    <Controller
+                        name="password"
+                        control={control}
+                        render={({ field }) =>
+                            <input {...field} type="password" style={styles.input} className="form-control" placeholder="password" required />
+                        }
+                    />
+
                     <button type="submit" style={styles.button} className="btn text-light">Login</button>
                 </div>
             </form>

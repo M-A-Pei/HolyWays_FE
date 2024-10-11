@@ -1,5 +1,8 @@
 import { Controller, useForm } from "react-hook-form"
-import { api } from "../libs/api"
+import { api, setAuthToken } from "../libs/api"
+import { toast } from "react-toastify"
+import { useUser } from "../state/store"
+import { useNavigate } from "react-router-dom"
 
 const styles = {
     input: {
@@ -17,17 +20,25 @@ const styles = {
     }
 }
 
-async function onSubmit(data: any) {
-    try {
-        await api.post('/auth/register', data)
-        console.log("success")
-    } catch (error) {
-        console.log(error)
-    }
-}
-
 export default function Register() {
     const { control, handleSubmit } = useForm()
+    const setUser = useUser(state => state.setUser)
+    const navigate = useNavigate();
+
+    async function onSubmit(data: any) {
+        try {
+            const response = await api.post('/auth/register', data)
+            const token = response.data
+            setAuthToken(token)
+            const user = await api.get("/auth/me");
+            setUser({ name: user.data.name, email: user.data.email, phone: user.data.phone })
+            localStorage.setItem("token", token)
+            toast.success("Login successful")
+            navigate("/")
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <div>

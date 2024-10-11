@@ -4,8 +4,11 @@ import image_3 from "/cardimage1.jpeg"
 import image_4 from "/cardimage2.jpeg"
 import image_5 from "/cardImage3.png"
 import FundCard from '../components/FundCard';
+import { useUser } from "../state/store"
 
 export default function Index() {
+    const user = useUser(state => state.user)
+    console.log(user)
     return (
         <>
             <div style={{ height: "80vh", backgroundColor: "#bf2626" }} className="row m-0">
@@ -66,7 +69,6 @@ export default function Index() {
                         progress={65}
                         total={30000}
                     />
-
                 </div>
             </div >
         </>
