@@ -52,6 +52,7 @@ export default function Index() {
                         description="Some quick example text to build on the card title and make up the bulk of the card's content."
                         progress={25}
                         total={500000}
+                        id="1"
                     />
 
                     <FundCard
@@ -60,6 +61,7 @@ export default function Index() {
                         description="Some quick example text to build on the card title and make up the bulk of the card's content."
                         progress={75}
                         total={90000}
+                        id="1"
                     />
 
                     <FundCard
@@ -68,6 +70,7 @@ export default function Index() {
                         description="Some quick example text to build on the card title and make up the bulk of the card's content."
                         progress={65}
                         total={30000}
+                        id="1"
                     />
                 </div>
             </div >

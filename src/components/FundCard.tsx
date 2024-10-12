@@ -1,14 +1,18 @@
+import { useNavigate } from "react-router-dom"
+
 interface props {
     title: string,
     description: string,
     image: string,
     progress: number,
     total: number,
+    id: string
 }
 
-export default function FundCard({ title, description, image, progress, total }: props) {
+export default function FundCard({ title, description, image, progress, total, id }: props) {
+    const navigate = useNavigate()
     return (
-        <div className="card col-lg-3 col-sm-12">
+        <div className="card col-lg-3 col-sm-12 mx-3" onClick={()=>navigate(`/fundDetail/${id}`)}>
             <img className="card-img-top" width={"100%"} height={"200px"} src={image} alt="Card image cap" />
             <div className="card-body">
                 <h5 className="card-title fw-bold ">{title}</h5>

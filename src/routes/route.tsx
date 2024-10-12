@@ -5,6 +5,8 @@ import Index from "../pages/Index";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Profile from "../pages/Profile";
+import RaiseFund from "../pages/RaiseFund";
+import FundDetail from "../pages/FundDetail";
 
 const route: RouteObject[] = [
     {
@@ -18,6 +20,14 @@ const route: RouteObject[] = [
             {
                 path: "profile",
                 element: <Profile />
+            },
+            {
+                path: "raiseFund",
+                element: <RaiseFund />
+            },
+            {
+                path: "fundDetail/:id",
+                element: <FundDetail />
             }
         ]
     },
