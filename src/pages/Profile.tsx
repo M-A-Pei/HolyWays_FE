@@ -1,15 +1,31 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useUser } from "../state/store"
 import { useNavigate } from "react-router-dom"
+import { api, setAuthToken } from "../libs/api"
 
 export default function Profile() {
     const navigate = useNavigate()
     const user = useUser((state) => state.user)
+    const [donations, setDonations] = useState<object[]>([])
+
+    async function getDonations(){
+        try {
+            const token = localStorage.getItem("token")
+            if(token){
+                setAuthToken(token)
+                const response = await api.get('/donation/ByDonator/' + user?.email)
+                setDonations(response.data)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     useEffect(()=>{
         if(user == null){
             navigate('/')
         }
+        getDonations()
     }, [])
 
     return (

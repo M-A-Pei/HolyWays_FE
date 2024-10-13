@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import image_3 from "/cardimage1.jpeg"
 import { useParams } from "react-router-dom"
-import { api } from "../libs/api"
+import { api, setAuthToken } from "../libs/api"
+import { toast } from "react-toastify"
 
 const styles = {
     input: {
@@ -27,7 +28,25 @@ export default function FundDetail(){
     const [isDropdown, setIsDropdown] = useState(false)
     const [data, setData] = useState<any>()
 
+    const [amount, setAmount] = useState(0)
+    const [image, setImage] = useState<string | undefined>(undefined)
+
+    const onDonate = async() => {
+        try{
+            const token = localStorage.getItem("token")
+            if(token){
+                setAuthToken(token)
+                await api.post(`/donation/${id}`, {amount, image})
+                toast.success("thank you so much for your donation!")
+            }
+        }catch(error){
+            console.log(error)
+        }
+    }
+
     async function getDetail(){
+        if(amount == 0) return
+        if(image == undefined) return
         try {
             const response = await api.get(`/fund/${id}`)
             setData(response.data)
@@ -74,15 +93,15 @@ export default function FundDetail(){
                             </button>
                             <div className={`dropdown-menu ${isDropdown ? 'show' : ''} p-4`} style={{width: "500px"}}>
                                 <div className="d-flex flex-column gap-3">
-                                    <input type="number" style={styles.input} className="form-control" placeholder="Nominal Donation" required />
-                                    <input id="image" type="file" className="d-none" required />
+                                    <input type="number" onChange={(e) => setAmount(Number(e.target.value))} value={amount} style={styles.input} className="form-control" placeholder="Nominal Donation" required />
+                                    <input id="image" onChange={(e) => setImage(e.target.files?.[0]?.name)} type="file" className="d-none" required />
                                     <div className="d-flex justify-content-between">
                                         <label htmlFor="image" style={styles.imageButton} className="btn text-light btn-sm d-flex align-items-center gap-2">
                                             <b className="fw-normal">Attach Payment</b> <i className="bi bi-cash-coin"></i>
                                         </label>
                                         <small className="text-secondary">*transfers can be made to HolyWays account</small>
                                     </div>
-                                    <button type="submit" style={styles.button} className="btn text-light">Donate</button>
+                                    <button type="submit" onClick={onDonate} style={styles.button} className="btn text-light">Donate</button>
                                 </div>
                             </div>
                         </div>
