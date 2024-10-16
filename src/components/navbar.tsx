@@ -28,7 +28,7 @@ export default function Navbar() {
     return (
         <nav style={{ backgroundColor: "#bf2626" }} className="navbar navbar-expand-lg navbar-dark px-5">
             <div className="container-fluid">
-                <a className="navbar-brand" onClick={() => {navigate('/'); setIsDropdown(false)}}><img src={logo} alt="asdsadsad" /></a>
+                <a className="navbar-brand" onClick={() => { navigate('/'); setIsDropdown(false) }}><img src={logo} alt="asdsadsad" /></a>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
@@ -39,10 +39,10 @@ export default function Navbar() {
                     {
                         isLogin ? (
                             <div>
-                                <img onClick={() => setIsDropdown(!isDropdown)} width={40} height={40} className='rounded-circle' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7mMNz8YCBvYmnr3BQUPX__YsC_WtDuAevwg&s" alt="" />
+                                <img onClick={() => setIsDropdown(!isDropdown)} width={50} height={50} className='rounded-circle' src={user?.pfp ? user.pfp : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} alt="" />
                                 <div className={`dropdown-menu ${isDropdown ? 'show' : ''}`} style={{ right: 110 }}>
-                                    <a className="dropdown-item d-flex gap-2" onClick={() => {navigate('/profile'); setIsDropdown(false)}}><i className="bi bi-person"></i>Profile</a>
-                                    <a className="dropdown-item d-flex gap-2" onClick={() => {navigate('/raiseFund'); setIsDropdown(false)}}><i className="bi bi-cash-coin"></i>Raise Fund</a>
+                                    <a className="dropdown-item d-flex gap-2" onClick={() => { navigate('/profile'); setIsDropdown(false) }}><i className="bi bi-person"></i>Profile</a>
+                                    <a className="dropdown-item d-flex gap-2" onClick={() => { navigate('/raiseFund'); setIsDropdown(false) }}><i className="bi bi-cash-coin"></i>Raise Fund</a>
                                     <div className="dropdown-divider"></div>
                                     <a className="dropdown-item d-flex gap-2" onClick={onLogout}><i className="bi bi-box-arrow-left text-danger"></i>Logout</a>
                                 </div>

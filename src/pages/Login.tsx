@@ -31,7 +31,7 @@ export default function Login() {
             const token = response.data
             setAuthToken(token)
             const user = await api.get("/auth/me");
-            setUser({ name: user.data.name, email: user.data.email, phone: user.data.phone })
+            setUser({ name: user.data.name, email: user.data.email, phone: user.data.phone, pfp: user.data.image })
             localStorage.setItem("token", token)
             toast.success("Login successful")
             navigate("/")

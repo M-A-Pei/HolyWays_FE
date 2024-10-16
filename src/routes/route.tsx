@@ -1,13 +1,14 @@
 import { RouteObject } from "react-router-dom";
 import MainLayout from "../layout/mainLayout";
 import AuthLayout from "../layout/authLayout";
-import Index from "../pages/Index";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Profile from "../pages/Profile";
 import RaiseFund from "../pages/RaiseFund";
 import FundDetail from "../pages/FundDetail";
 import MakeRaiseFund from "../pages/MakeRaiseFund";
+import EditProfile from "../pages/EditProfile";
+import Index from "../pages";
 
 const route: RouteObject[] = [
     {
@@ -33,6 +34,10 @@ const route: RouteObject[] = [
             {
                 path: "makeRaiseFund",
                 element: <MakeRaiseFund />
+            },
+            {
+                path: "editProfile",
+                element: <EditProfile />
             }
         ]
     },

@@ -6,8 +6,9 @@ interface IUser {
         name: string
         email: string
         phone: string
+        pfp?: string
     } | null
-    setUser: (user: { name: string, email: string, phone: string }) => void
+    setUser: (user: { name: string, email: string, phone: string, pfp?: string }) => void
     clearUser: () => void
 }
 

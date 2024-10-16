@@ -39,7 +39,7 @@ export default function Profile() {
                 <div className="p-2">
                     <h1 className="mb-4">My Profile</h1>
                     <div className="d-flex gap-3">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7mMNz8YCBvYmnr3BQUPX__YsC_WtDuAevwg&s" alt="" />
+                        <img width={200} height={200} src={user?.pfp ? user.pfp : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} alt="" />
                         <div className="d-flex flex-column">
                             <div className="d-flex flex-column">
                                 <h5 className="fw-bold" style={{ color: "#bf2626" }}>Full Name</h5>
@@ -57,7 +57,11 @@ export default function Profile() {
                             </div>
                         </div>
                     </div>
-                    <button className="btn text-light mt-3 w-100" style={{ backgroundColor: "#bf2626" }}>Edit Profile</button>
+                    <button
+                        className="btn text-light mt-3 w-100"
+                        style={{ backgroundColor: "#bf2626" }}
+                        onClick={() => navigate('/editProfile')}
+                    >Edit Profile</button>
                 </div>
             </div>
             <div className="col-lg-6 d-flex justify-content-center">
