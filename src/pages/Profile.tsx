@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useUser } from "../state/store"
 import { useNavigate } from "react-router-dom"
 import { api, setAuthToken } from "../libs/api"
+import DonationCard from "../components/DonationCard"
 
 export default function Profile() {
     const navigate = useNavigate()
     const user = useUser((state) => state.user)
     const [donations, setDonations] = useState<object[]>([])
 
-    async function getDonations(){
+    async function getDonations() {
         try {
             const token = localStorage.getItem("token")
-            if(token){
+            if (token) {
                 setAuthToken(token)
                 const response = await api.get('/donation/ByDonator/' + user?.email)
                 setDonations(response.data)
@@ -21,12 +22,16 @@ export default function Profile() {
         }
     }
 
-    useEffect(()=>{
-        if(user == null){
+    useEffect(() => {
+        if (user == null) {
             navigate('/')
         }
         getDonations()
     }, [])
+
+    useMemo(() => {
+        console.log("donation", donations)
+    }, [donations])
 
     return (
         <div className="row mt-5">
@@ -37,47 +42,39 @@ export default function Profile() {
                         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7mMNz8YCBvYmnr3BQUPX__YsC_WtDuAevwg&s" alt="" />
                         <div className="d-flex flex-column">
                             <div className="d-flex flex-column">
-                                <h5 className="fw-bold" style={{color: "#bf2626"}}>Full Name</h5>
+                                <h5 className="fw-bold" style={{ color: "#bf2626" }}>Full Name</h5>
                                 <p className="text-secondary">{user?.name}</p>
                             </div>
 
                             <div className="d-flex flex-column">
-                                <h5 className="fw-bold" style={{color: "#bf2626"}}>Email</h5>
+                                <h5 className="fw-bold" style={{ color: "#bf2626" }}>Email</h5>
                                 <p className="text-secondary">{user?.email}</p>
                             </div>
 
                             <div className="d-flex flex-column">
-                                <h5 className="fw-bold" style={{color: "#bf2626"}}>Phone</h5>
-                                <p className="text-secondary">{user?.phone}</p>
+                                <h5 className="fw-bold" style={{ color: "#bf2626" }}>Phone</h5>
+                                <p className="text-secondary">{user?.phone ? user?.phone : "----------"}</p>
                             </div>
                         </div>
                     </div>
+                    <button className="btn text-light mt-3 w-100" style={{ backgroundColor: "#bf2626" }}>Edit Profile</button>
                 </div>
             </div>
             <div className="col-lg-6 d-flex justify-content-center">
-                <div className="p-3">
+                <div className="p-3 w-100">
                     <h1 className="mb-3">History Donations</h1>
-                    <div style={{height: 400, overflowY: "scroll"}}>
-                        <div className="bg-light p-3 mb-3">
-                            <h5 className="fw-bold">The strength of people empower communities</h5>
-                            <small className="text-secondary"><b className="fw-bold text-dark">Saturday:</b> 12 april 2024</small>
-                            <p style={{color: "#bf2626"}} className="fw-bold mt-3">total: 4000000</p>
-                        </div>
-                        <div className="bg-light p-3 mb-3">
-                            <h5 className="fw-bold">The strength of people empower communities</h5>
-                            <small className="text-secondary"><b className="fw-bold text-dark">Saturday:</b> 12 april 2024</small>
-                            <p style={{color: "#bf2626"}} className="fw-bold mt-3">total: 4000000</p>
-                        </div>
-                        <div className="bg-light p-3 mb-3">
-                            <h5 className="fw-bold">The strength of people empower communities</h5>
-                            <small className="text-secondary"><b className="fw-bold text-dark">Saturday:</b> 12 april 2024</small>
-                            <p style={{color: "#bf2626"}} className="fw-bold mt-3">total: 4000000</p>
-                        </div>
-                        <div className="bg-light p-3 mb-3">
-                            <h5 className="fw-bold">The strength of people empower communities</h5>
-                            <small className="text-secondary"><b className="fw-bold text-dark">Saturday:</b> 12 april 2024</small>
-                            <p style={{color: "#bf2626"}} className="fw-bold mt-3">total: 4000000</p>
-                        </div>
+                    <div style={{ height: 400, overflowY: "scroll" }}>
+                        {
+                            donations.map((e: any) => {
+                                return (
+                                    <DonationCard
+                                        title={e.fund.title}
+                                        total={e.amount}
+                                        date={e.date}
+                                    />
+                                )
+                            })
+                        }
                     </div>
                 </div>
             </div>

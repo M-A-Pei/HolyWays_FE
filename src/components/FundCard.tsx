@@ -12,8 +12,8 @@ interface props {
 export default function FundCard({ title, description, image, progress, total, id }: props) {
     const navigate = useNavigate()
     return (
-        <div className="card col-lg-3 col-sm-12 mx-3" onClick={()=>navigate(`/fundDetail/${id}`)}>
-            <img className="card-img-top" width={"100%"} height={"200px"} src={image} alt="Card image cap" />
+        <div className="card col-lg-3 col-sm-12 mx-3" onClick={() => navigate(`/fundDetail/${id}`)}>
+            <img className="card-img-top" width={"100%"} height={"300px"} src={image} alt="Card image cap" />
             <div className="card-body">
                 <h5 className="card-title fw-bold ">{title}</h5>
                 <p className="card-text text-muted" style={{ height: "100px", overflowY: "scroll", textOverflow: "ellipsis" }}>{description}</p>
@@ -23,7 +23,7 @@ export default function FundCard({ title, description, image, progress, total, i
                 </div>
 
                 <div className="d-flex justify-content-between">
-                    <p className="text-muted fw-bold">Rp. {total}</p>
+                    <p className="text-muted fw-bold">Rp. {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</p>
                     <a href="#" className="btn text-light" style={{ backgroundColor: "#bf2626" }} >Donate</a>
                 </div>
             </div>

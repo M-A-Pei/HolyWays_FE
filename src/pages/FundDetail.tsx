@@ -1,52 +1,22 @@
-import { useEffect, useState } from "react"
-import image_3 from "/cardimage1.jpeg"
+import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
-import { api, setAuthToken } from "../libs/api"
-import { toast } from "react-toastify"
+import { api } from "../libs/api"
+import DonationCard from "../components/DonationCard"
+import DonateModal from "../components/DonateModal"
+import { useUser } from "../state/store"
+import ApproveModal from "../components/ApproveModal"
 
-const styles = {
-    input: {
-        width: "100%",
-        backgroundColor: "#e1e1e1",
-        border: "solid 2px #ccc",
-    },
-    button: {
-        backgroundColor: "#bf2626",
-        marginTop: "20px",
-        heigth: "15px"
-    },
-    imageButton: {
-        backgroundColor: "#bf2626",
-        marginBottom: "10px",
-        width: "150px",
-        heigth: "15px"
-    }
-}
-
-export default function FundDetail(){
-    const {id} = useParams()
-    const [isDropdown, setIsDropdown] = useState(false)
+export default function FundDetail() {
+    const { id } = useParams()
     const [data, setData] = useState<any>()
+    const [donations, setDonations] = useState<object[]>([])
+    const [unconfirmedDonations, setUnconfirmedDonations] = useState<object[]>([])
 
-    const [amount, setAmount] = useState(0)
-    const [image, setImage] = useState<string | undefined>(undefined)
 
-    const onDonate = async() => {
-        try{
-            const token = localStorage.getItem("token")
-            if(token){
-                setAuthToken(token)
-                await api.post(`/donation/${id}`, {amount, image})
-                toast.success("thank you so much for your donation!")
-            }
-        }catch(error){
-            console.log(error)
-        }
-    }
+    const user = useUser((state) => state.user)
 
-    async function getDetail(){
-        if(amount == 0) return
-        if(image == undefined) return
+
+    async function getDetail() {
         try {
             const response = await api.get(`/fund/${id}`)
             setData(response.data)
@@ -55,99 +25,117 @@ export default function FundDetail(){
         }
     }
 
-    useEffect(()=>{
-        getDetail() 
+    async function getDonations() {
+        try {
+            const response = await api.get(`/donation/byFund/${id}/true`
+            )
+            console.log("yo", response.data)
+            setDonations(response.data)
+        } catch (error) {
+            console.log("error in donations", error)
+        }
+    }
+
+    async function getUnconfirmedDonations() {
+        try {
+            const response = await api.get(`/donation/byFund/${id}/false`
+            )
+            setUnconfirmedDonations(response.data)
+        } catch (error) {
+            console.log("error in donations", error)
+        }
+    }
+
+    useEffect(() => {
+        getDetail()
+        getDonations()
+        getUnconfirmedDonations()
     }, [])
 
-    return(
+    useMemo(() => { console.log("data", data) }, [donations])
+
+    return (
         <div className="row">
             <div className="col-lg-12 d-flex justify-content-center">
                 <div className="d-flex gap-5 p-3 col-lg-11">
-                    <img src={image_3} width={650} height={500} />
+                    <img src={data?.image} width={650} height={500} />
                     <div className="d-flex flex-column gap-3 w-100">
                         <h1 className="fw-bold mb-3">{data?.title}</h1>
                         <div className="d-flex flex-column">
                             <div className="d-flex gap-3">
-                                <h4 className="fw-bold" style={{color: "#bf2626"}}>Rp. {data?.currentFunds}</h4>
-                                <p className="text-secondary">gathered from</p> 
-                                <h4 className="fw-bold text-secondary">Rp. {data?.goal}</h4>
+                                <h4 className="fw-bold" style={{ color: "#bf2626" }}>Rp. {data?.currentFunds.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</h4>
+                                <p className="text-secondary">gathered from</p>
+                                <h4 className="fw-bold text-secondary">Rp. {data?.goal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</h4>
                             </div>
                             <div className="progress mb-3" style={{ height: "10px", border: "solid gray 0.5px" }}>
-                                <div className="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style={{ width: `10%` }}></div>
+                                <div className="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style={{ width: `${(data?.currentFunds / data?.goal) * 100}%` }}></div>
                             </div>
                             <div>
                                 <div className="d-flex align-items-center gap-2">
-                                    <h4 className="fw-bold">{data?.donations ? data?.donations.length : 0}</h4>
+                                    <h4 className="fw-bold">{donations.length ? donations.length : 0}</h4>
                                     <i className="text-secondary fw-bold">Donations</i>
                                 </div>
                             </div>
                         </div>
 
-                        <p className="text-secondary" style={{height: 100, overflowY: "scroll"}}>
+                        <p className="text-secondary" style={{ height: 100, overflowY: "scroll" }}>
                             {data?.description}
                         </p>
-                        
+
                         <div>
-                            <button className="btn text-light mb-3" onClick={() => setIsDropdown(!isDropdown)} style={{backgroundColor:"#bf2626"}}>
-                                Donate
-                            </button>
-                            <div className={`dropdown-menu ${isDropdown ? 'show' : ''} p-4`} style={{width: "500px"}}>
-                                <div className="d-flex flex-column gap-3">
-                                    <input type="number" onChange={(e) => setAmount(Number(e.target.value))} value={amount} style={styles.input} className="form-control" placeholder="Nominal Donation" required />
-                                    <input id="image" onChange={(e) => setImage(e.target.files?.[0]?.name)} type="file" className="d-none" required />
-                                    <div className="d-flex justify-content-between">
-                                        <label htmlFor="image" style={styles.imageButton} className="btn text-light btn-sm d-flex align-items-center gap-2">
-                                            <b className="fw-normal">Attach Payment</b> <i className="bi bi-cash-coin"></i>
-                                        </label>
-                                        <small className="text-secondary">*transfers can be made to HolyWays account</small>
-                                    </div>
-                                    <button type="submit" onClick={onDonate} style={styles.button} className="btn text-light">Donate</button>
-                                </div>
-                            </div>
+                            <DonateModal id={String(id)} />
                         </div>
-                        
-                            
-                            
-                        
+
+
+
+
                     </div>
                 </div>
             </div>
 
             <div className="col-lg-12 d-flex justify-content-center mt-5">
                 <div className="col-lg-8 d-flex flex-column gap-2">
-                    <h1>Donation List (200)</h1>
-                    <div className="d-flex flex-column gap-3" style={{height: "400px", overflowY: "scroll"}}>
-                        <div className="bg-light p-3">
-                            <h5>Andi</h5>
-                            <div className="d-flex gap-2">
-                                <b className="fw-bold">Saturday</b>
-                                <p>12 april 2024</p>
-                            </div>
-                            <h5 className="fw-bold" style={{color: "#bf0000"}}>Rp. 50000</h5>
-                        </div>
-
-                        <div className="bg-light p-3">
-                        <h5>Andi</h5>
-                        <div className="d-flex gap-2">
-                            <b className="fw-bold">Saturday</b>
-                            <p>12 april 2024</p>
-                        </div>
-                        <h5 className="fw-bold" style={{color: "#bf0000"}}>Rp. 50000</h5>
-                        </div>
-
-                        <div className="bg-light p-3">
-                        <h5>Andi</h5>
-                        <div className="d-flex gap-2">
-                            <b className="fw-bold">Saturday</b>
-                            <p>12 april 2024</p>
-                        </div>
-                        <h5 className="fw-bold" style={{color: "#bf0000"}}>Rp. 50000</h5>
-                        </div>
-                        
+                    <h1>Donation List ({donations.length})</h1>
+                    <div className="d-flex flex-column gap-3" style={{ height: "400px", overflowY: "scroll" }}>
+                        {
+                            donations.map((e: any) => {
+                                return (
+                                    <DonationCard
+                                        title={e.donator.name}
+                                        total={e.amount}
+                                        date={e.date}
+                                    />
+                                )
+                            })
+                        }
                     </div>
-                    
+
                 </div>
             </div>
+            {user?.email == data?.owner.email &&
+                <div className="col-lg-12 d-flex justify-content-center mt-5">
+                    <div className="col-lg-8 d-flex flex-column gap-2">
+                        <h1>Donation has not been approved ({unconfirmedDonations.length})</h1>
+                        <div className="d-flex flex-column gap-3" style={{ height: "400px", overflowY: "scroll" }}>
+                            {
+                                unconfirmedDonations.map((e: any) => {
+                                    return (
+                                        <ApproveModal name={e.donator.name} amount={e.amount} id={e.id} image={e.image}>
+                                            <DonationCard
+                                                title={e.donator.name}
+                                                total={e.amount}
+                                                date={e.date}
+                                            />
+                                        </ApproveModal>
+                                    )
+                                })
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            }
+
         </div>
     )
 }

@@ -28,76 +28,86 @@ const styles = {
     }
 }
 
-export default function MakeRaiseFund(){
+export default function MakeRaiseFund() {
     const { control, handleSubmit } = useForm()
     const navigate = useNavigate()
     const user = useUser((state) => state.user)
 
-    useEffect(()=>{
-        if(user == null){
+    useEffect(() => {
+        if (user == null) {
             navigate('/')
         }
     }, [])
 
-    async function onSubmit(data: any){
-        try{
+    async function onSubmit(data: any) {
+        try {
             const token = localStorage.getItem("token")
-            if(token){
+            if (token) {
                 setAuthToken(token)
-                const response = await api.post('/fund', data)
+                console.log("image", data.image)
+                const formData = new FormData()
+                formData.append('title', data.title)
+                formData.append('image', data.image[0])
+                formData.append('description', data.description)
+                formData.append('goal', data.goal)
+                const response = await api.post('/fund', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
                 console.log(response)
             }
             toast.success("Succesfully raised fund, we hope you the best!")
             navigate('/')
-        }catch(error){
+        } catch (error) {
             toast.error("Failed to create fund")
         }
     }
-    
-    return(
+
+    return (
         <div className="row d-flex justify-content-center">
             <div className="col-lg-9 mt-5 px-5">
                 <h1 className="mb-3">Make Raise Fund</h1>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="form-group d-flex flex-column">
-                    <Controller
-                        name="title"
-                        control={control}
-                        render={({ field }) =>
-                            <input {...field} type="text" style={styles.input} className="form-control" placeholder="title" required />
-                        }
-                    />
+                <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+                    <div className="form-group d-flex flex-column">
+                        <Controller
+                            name="title"
+                            control={control}
+                            render={({ field }) =>
+                                <input {...field} type="text" style={styles.input} className="form-control" placeholder="title" required />
+                            }
+                        />
 
-                    <Controller
-                        name="image"
-                        control={control}
-                        render={({ field }) =>
-                            <>
-                                <input {...field} id="image" type="file" className="d-none" placeholder="title" required />
-                                <label htmlFor="image" style={styles.imageButton} className="btn text-light btn-sm">Attach thumbnail</label>
-                            </>
-                        }
-                    />
+                        <Controller
+                            name="image"
+                            control={control}
+                            render={({ field }) =>
+                                <>
+                                    <input onChange={(e) => field.onChange(e.target.files)} id="image" type="file" className="d-none" placeholder="title" required />
+                                    <label htmlFor="image" style={styles.imageButton} className="btn text-light btn-sm">Attach thumbnail</label>
+                                </>
+                            }
+                        />
 
-                    <Controller
-                        name="goal"
-                        control={control}
-                        render={({ field }) =>
-                            <input {...field} type="number" style={styles.input} className="form-control" placeholder="Donation Goal" required />
-                        }
-                    />
+                        <Controller
+                            name="goal"
+                            control={control}
+                            render={({ field }) =>
+                                <input {...field} type="number" style={styles.input} className="form-control" placeholder="Donation Goal" required />
+                            }
+                        />
 
-                    <Controller
-                        name="description"
-                        control={control}
-                        render={({ field }) =>
-                            <textarea {...field}  style={styles.input} className="form-control" rows={5} placeholder="Description" required />
-                        }
-                    />
+                        <Controller
+                            name="description"
+                            control={control}
+                            render={({ field }) =>
+                                <textarea {...field} style={styles.input} className="form-control" rows={5} placeholder="Description" required />
+                            }
+                        />
 
-                    <button type="submit" style={styles.button} className="btn text-light">Public fundraising</button>
-                </div>
-            </form>
+                        <button type="submit" style={styles.button} className="btn text-light">Public fundraising</button>
+                    </div>
+                </form>
             </div>
         </div>
     )

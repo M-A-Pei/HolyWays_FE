@@ -36,6 +36,7 @@ export default function Register() {
             toast.success("Login successful")
             navigate("/")
         } catch (error) {
+            toast.error("Invalid email or password")
             console.log(error)
         }
     }
