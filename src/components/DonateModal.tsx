@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { api, setAuthToken } from '../libs/api'
 import { toast } from 'react-toastify'
 import { useForm, Controller } from 'react-hook-form'
@@ -24,7 +23,6 @@ const styles = {
 }
 
 export default function DonateModal({ id }: { id: string }) {
-    const [isDropdown, setIsDropdown] = useState(false)
     const { handleSubmit, control } = useForm()
 
     const onDonate = async (data: any) => {
@@ -45,44 +43,54 @@ export default function DonateModal({ id }: { id: string }) {
 
     return (
         <>
-            <button className="btn text-light mb-3" onClick={() => setIsDropdown(!isDropdown)} style={{ backgroundColor: "#bf2626" }}>
+            <button type="button" className="btn text-light mb-3" data-bs-toggle="modal" data-bs-target="#DonateModal" style={{ backgroundColor: "#bf2626" }}>
                 Donate
             </button>
-            <div className={`dropdown-menu ${isDropdown ? 'show' : ''} p-4`} style={{ width: "500px" }}>
-                <form onSubmit={handleSubmit(onDonate)} className="d-flex flex-column gap-3">
-                    <Controller
-                        name='amount'
-                        control={control}
-                        render={({ field }) => (
-                            <input
-                                {...field}
-                                type="number"
-                                style={styles.input}
-                                className="form-control"
-                                placeholder="Nominal Donation"
-                                required
-                            />
-                        )}
-                    />
 
-                    <Controller
-                        name='image'
-                        control={control}
-                        render={({ field }) => (
-                            <>
-                                <input id="image" onChange={(e) => field.onChange(e.target.files)} type="file" className="d-none" required />
-                                <div className="d-flex justify-content-between">
-                                    <label htmlFor="image" style={styles.imageButton} className="btn text-light btn-sm d-flex align-items-center gap-2">
-                                        <b className="fw-normal">Attach Payment</b> <i className="bi bi-cash-coin"></i>
-                                    </label>
-                                    <small className="text-secondary">*transfers can be made to HolyWays account</small>
-                                </div>
-                            </>
-                        )}
-                    />
+            <div className="modal fade" id="DonateModal" aria-hidden="true">
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-body">
+                    <form onSubmit={handleSubmit(onDonate)} className="d-flex flex-column gap-3">
+                        <Controller
+                            name='amount'
+                            control={control}
+                            render={({ field }) => (
+                                <input
+                                    {...field}
+                                    type="number"
+                                    style={styles.input}
+                                    className="form-control"
+                                    placeholder="Nominal Donation"
+                                    required
+                                />
+                            )}
+                        />
 
-                    <button type="submit" onClick={onDonate} style={styles.button} className="btn text-light">Donate</button>
-                </form>
+                        <Controller
+                            name='image'
+                            control={control}
+                            render={({ field }) => (
+                                <>
+                                    <input id="image" onChange={(e) => field.onChange(e.target.files)} type="file" className="d-none" required />
+                                    <div className="d-flex gap-3 justify-content-between">
+                                        <label htmlFor="image" style={styles.imageButton} className="btn text-light btn-sm d-flex align-items-center gap-2">
+                                            <b className="fw-normal">Attach Payment</b> <i className="bi bi-cash-coin"></i>
+                                        </label>
+                                        <small className="text-secondary">*transfers can be made to HolyWays account</small>
+                                    </div>
+                                </>
+                            )}
+                        />
+
+                        <button type="submit" data-bs-dismiss="modal" onClick={onDonate} style={styles.button} className="btn text-light">Donate</button>
+                    </form>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
             </div>
         </>
     )

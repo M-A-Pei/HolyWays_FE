@@ -57,15 +57,18 @@ export default function FundDetail() {
     return (
         <div className="row">
             <div className="col-lg-12 d-flex justify-content-center">
-                <div className="d-flex gap-5 p-3 col-lg-11">
-                    <img src={data?.image} width={650} height={500} />
-                    <div className="d-flex flex-column gap-3 w-100">
+                <div className="d-flex gap-3 p-3 col-lg-11 flex-wrap justify-content-center">
+                    <div className="col-lg-5">
+                        <img src={data?.image} width="100%"/>
+                    </div>
+                    
+                    <div className="d-flex flex-column gap-1 col-lg-6">
                         <h1 className="fw-bold mb-3">{data?.title}</h1>
                         <div className="d-flex flex-column">
                             <div className="d-flex gap-3">
-                                <h4 className="fw-bold" style={{ color: "#bf2626" }}>Rp. {data?.currentFunds.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</h4>
+                                <h5 className="fw-bold" style={{ color: "#bf2626" }}>Rp. {data?.currentFunds.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</h5>
                                 <p className="text-secondary">gathered from</p>
-                                <h4 className="fw-bold text-secondary">Rp. {data?.goal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</h4>
+                                <h5 className="fw-bold text-secondary">Rp. {data?.goal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</h5>
                             </div>
                             <div className="progress mb-3" style={{ height: "10px", border: "solid gray 0.5px" }}>
                                 <div className="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style={{ width: `${(data?.currentFunds / data?.goal) * 100}%` }}></div>
@@ -78,7 +81,7 @@ export default function FundDetail() {
                             </div>
                         </div>
 
-                        <p className="text-secondary" style={{ height: 100, overflowY: "scroll" }}>
+                        <p className="text-secondary" style={{ height: 80, overflowY: "scroll" }}>
                             {data?.description}
                         </p>
 
@@ -93,8 +96,8 @@ export default function FundDetail() {
                 </div>
             </div>
 
-            <div className="col-lg-12 d-flex justify-content-center mt-5">
-                <div className="col-lg-8 d-flex flex-column gap-2">
+            <div className="col-lg-12 d-flex justify-content-center mt-5 px-0">
+                <div className="w-75 d-flex flex-column gap-2">
                     <h1>Donation List ({donations.length})</h1>
                     <div className="d-flex flex-column gap-3" style={{ height: "400px", overflowY: "scroll" }}>
                         {
@@ -114,8 +117,8 @@ export default function FundDetail() {
             </div>
             {user?.email == data?.owner.email &&
                 <div className="col-lg-12 d-flex justify-content-center mt-5">
-                    <div className="col-lg-8 d-flex flex-column gap-2">
-                        <h1>Donation has not been approved ({unconfirmedDonations.length})</h1>
+                    <div className="w-75 d-flex flex-column gap-2">
+                        <h1>Unapproved Donations({unconfirmedDonations.length})</h1>
                         <div className="d-flex flex-column gap-3" style={{ height: "400px", overflowY: "scroll" }}>
                             {
                                 unconfirmedDonations.map((e: any) => {
